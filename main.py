@@ -1,5 +1,7 @@
 import tweepy
 import time
+import datetime
+
 
 api_key = "XXXX"
 api_secret = "XXXX"
@@ -15,23 +17,31 @@ auth = tweepy.OAuthHandler(api_key, api_secret, access_token, access_token_secre
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 while True:
-    for tweet in tweepy.Cursor(api.search_tweets, q=('#indiegamedev OR #indiegame OR #gamedev OR indiedev -filter:retweets'), lang='en').items(10):
+    # get time at start of loop
+    now = datetime.datetime.now()
+    
+    for tweet in tweepy.Cursor(api.search_tweets, q=('#indiegamedev OR #indiegame OR #gamedev OR indiedev -filter:retweets'), lang='en').items(6):
         try:
             # Add \n escape character to print() to organize tweets
             print('\nTweet by: @' + tweet.user.screen_name)
-            print('\nTweet link: https://twitter.com/' + tweet.user.screen_name + '/status/' + str(tweet.id))
+            print('Tweet link: https://twitter.com/' + tweet.user.screen_name + '/status/' + str(tweet.id))
 
-            # Retweet tweets as they are found
+            # Retweet and like tweets as they are found
             tweet.retweet()
-            print('Retweeted the tweet')
+            client.like(tweet.id)
+            print('---- SUCCESS!')
 
         except tweepy.errors.TweepyException as e:
-            print(e)
+            # if tweet is already retweeted/liked, print this.
+            print("FAILED - TWEET ALREADY RETWEETED AND LIKED")
 
         except StopIteration:
             break
 
+    # print time at end of loop
+    print ('\n-----     at  ' + str(now.time()) + '     -----')
 
-    time.sleep(60)
+    # wait for 2 minutes
+    time.sleep(120)
 
 
