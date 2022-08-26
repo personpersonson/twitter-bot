@@ -1,19 +1,21 @@
 import tweepy
 import time
 import datetime
+import os
+from dotenv import load_dotenv
 
 
-api_key = "XXXX"
-api_secret = "XXXX"
-bearer_token = r"XXXX"
-access_token = "XXXX"
-access_token_secret = "XXXX"
+load_dotenv()
 
-# replace the "XXXX" with your own keys, tokens, and secrets!
+API_KEY = os.getenv('API_KEY')
+API_SECRET = os.getenv('API_SECRET')
+BEARER_TOKEN = os.getenv('BEARER_TOKEN')
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
 
-client = tweepy.Client(bearer_token, api_key, api_secret, access_token, access_token_secret)
+client = tweepy.Client(BEARER_TOKEN, API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
-auth = tweepy.OAuthHandler(api_key, api_secret, access_token, access_token_secret)
+auth = tweepy.OAuthHandler(API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 while True:
