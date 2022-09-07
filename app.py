@@ -13,37 +13,57 @@ BEARER_TOKEN = os.getenv('BEARER_TOKEN')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
 
-client = tweepy.Client(BEARER_TOKEN, API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-
-auth = tweepy.OAuthHandler(API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-api = tweepy.API(auth, wait_on_rate_limit=True)
-
 while True:
-    # get time at start of loop
-    now = datetime.datetime.now()
-    
-    for tweet in tweepy.Cursor(api.search_tweets, q=('#indiegamedev OR #indiegame OR #gamedev OR indiedev -filter:retweets'), lang='en').items(6):
-        try:
-            # Add \n escape character to print() to organize tweets
-            print('\nTweet by: @' + tweet.user.screen_name)
-            print('Tweet link: https://twitter.com/' + tweet.user.screen_name + '/status/' + str(tweet.id))
+    try:
+        client = tweepy.Client(BEARER_TOKEN, API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
-            # Retweet and like tweets as they are found
-            tweet.retweet()
-            client.like(tweet.id)
-            print('---- SUCCESS!')
+        auth = tweepy.OAuthHandler(API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+        api = tweepy.API(auth, wait_on_rate_limit=True)
 
-        except tweepy.errors.TweepyException as e:
-            # if tweet is already retweeted/liked, print this.
-            print("FAILED - TWEET ALREADY RETWEETED AND LIKED")
+        while True:
+            # get time at start of loop
+            now = datetime.datetime.now()
 
-        except StopIteration:
-            break
+            tweetNum = 0
+            
+            for tweet in tweepy.Cursor(api.search_tweets, q=('#indiegamedev OR #madewithunity OR #unity3d OR #godot OR #trailertuesday OR #wishlistwednesday OR #indiegame OR #gamedev OR #indiedev -filter:retweets'), lang='en').items(10):
+                try:
+                    tweetNum += 1
+                    print('\nTweet by: @' + tweet.user.screen_name)
+                    print('Tweet link: https://twitter.com/' + tweet.user.screen_name + '/status/' + str(tweet.id))
 
-    # print time at end of loop
-    print ('\n-----     at  ' + str(now.time()) + '     -----')
+                    tweet.retweet()
+                    client.like(tweet.id)
+                    print('---- SUCCESS!')
 
-    # wait for 2 minutes
-    time.sleep(120)
+                except tweepy.errors.TweepyException as e:
+                    # if tweet is already retweeted/liked, print this.
+                    tweetNum -= 1
+                    print("FAILED - TWEET ALREADY RETWEETED AND LIKED")
+
+                except StopIteration:
+                    break
+
+            print ('\n-----    Retweeted and Liked ' + str(tweetNum) +  ' Tweets at ' + str(now.time())[:-7] + '     -----')
+
+            time.sleep(60)
+
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        print(message)
+
+    time.sleep(300)
+
+
+
+
+
+
+
+
+
+
+
 
 
