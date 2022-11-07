@@ -26,7 +26,7 @@ while True:
 
             tweetNum = 0
             
-            for tweet in tweepy.Cursor(api.search_tweets, q=('#indiegamedev OR #madewithunity OR #unity3d OR #godot OR #trailertuesday OR #wishlistwednesday OR #indiegame OR #gamedev OR #indiedev -filter:retweets'), lang='en').items(10):
+            for tweet in tweepy.Cursor(api.search_tweets, q=('#indiegamedev OR #madewithunity OR #unity3d OR #godot OR #trailertuesday OR #wishlistwednesday OR #indiegame OR #gamedev OR #indiedev -filter:retweets'), lang='en').items(5):
                 try:
                     tweetNum += 1
                     print('\nTweet by: @' + tweet.user.screen_name)
@@ -40,13 +40,14 @@ while True:
                     # if tweet is already retweeted/liked, print this.
                     tweetNum -= 1
                     print("FAILED - TWEET ALREADY RETWEETED AND LIKED")
+                    print(e)
 
                 except StopIteration:
                     break
 
             print ('\n-----    Retweeted and Liked ' + str(tweetNum) +  ' Tweets at ' + str(now.time())[:-7] + '     -----')
 
-            time.sleep(60)
+            time.sleep(120)
 
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
